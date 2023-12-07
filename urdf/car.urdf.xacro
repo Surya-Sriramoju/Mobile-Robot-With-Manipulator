@@ -939,6 +939,7 @@
       velocity="0" />
   </joint>
 
+<!-- Controllers -->
 
 <ros2_control name="GazeboSystem" type="system">
  <hardware>
@@ -1114,15 +1115,17 @@
         <parameters>$(find car)/config/control.yaml</parameters>
     </plugin>
  </gazebo>
+<!-- Controllers -->
 
- <xacro:macro name="body_color">
+<!-- color -->
+<xacro:macro name="body_color">
     <visual>
-    <material>
-        <ambient>0.8 0.558823529411765 0.1 1</ambient>
-        <diffuse>0.8 0.558823529411765 0.1 1</diffuse>
-        <specular>0.1 0.1 0.1 1</specular>
-        <emissive>0 0 0 0</emissive>
-    </material>
+        <material>
+            <ambient>0.1 0.1 0.8 1</ambient> <!-- Dark Blue -->
+            <diffuse>0.1 0.1 0.8 1</diffuse> <!-- Dark Blue -->
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 0</emissive>
+        </material>
     </visual>
 </xacro:macro>
 <gazebo reference="base_link">
@@ -1142,5 +1145,122 @@
 <gazebo reference="lidar_link">
     <xacro:lidar_color />
 </gazebo>
+
+<xacro:macro name="hinge_color">
+    <visual>
+        <material>
+           <ambient>0.8 0 0 1</ambient> <!-- Bright Red -->
+            <diffuse>0.8 0 0 1</diffuse> <!-- Bright Red -->
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 0</emissive>
+        </material>
+    </visual>
+</xacro:macro>
+<gazebo reference="left_hinge_back">
+    <xacro:hinge_color />
+</gazebo>
+<gazebo reference="left_hinge_front">
+    <xacro:hinge_color />
+</gazebo>
+<gazebo reference="right_hinge_back">
+    <xacro:hinge_color />
+</gazebo>
+<gazebo reference="right_hinge_front">
+    <xacro:hinge_color />
+</gazebo>
+
+<xacro:macro name="tires">
+    <visual>
+        <material>
+            <ambient>0.3 0.3 0.3 1</ambient> <!-- Dark Gray -->
+            <diffuse>0.3 0.3 0.3 1</diffuse> <!-- Dark Gray -->
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 0</emissive>
+        </material>
+    </visual>
+</xacro:macro>
+<gazebo reference="Left_wheel_front">
+    <xacro:tires />
+</gazebo>
+<gazebo reference="right_wheel_back">
+    <xacro:tires />
+</gazebo>
+<gazebo reference="left_wheel_back">
+    <xacro:tires />
+</gazebo>
+<gazebo reference="right_wheel_front">
+    <xacro:tires />
+</gazebo>
+
+<gazebo reference="arm_base">
+    <xacro:hinge_color />
+</gazebo>
+
+<xacro:macro name="ur5">
+    <visual>
+        <material>
+            <ambient>0.529 0.808 0.922 1</ambient> <!-- Light Blue -->
+            <diffuse>0.529 0.808 0.922 1</diffuse> <!-- Light Blue -->
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 0</emissive>
+        </material>
+    </visual>
+</xacro:macro>
+
+<gazebo reference="link_1">
+    <xacro:ur5 />
+</gazebo>
+<gazebo reference="link_2">
+    <xacro:ur5 />
+</gazebo>
+<gazebo reference="link_3">
+    <xacro:ur5 />
+</gazebo>
+<gazebo reference="link_4">
+    <xacro:ur5 />
+</gazebo>
+<gazebo reference="link_5">
+    <xacro:ur5 />
+</gazebo>
+<gazebo reference="link_6">
+    <xacro:ur5 />
+</gazebo>
+<!-- color -->
+
+
+
+<!-- plugins -->
+
+<!-- vacuum gripper -->
+<gazebo>
+  <plugin name='vacuum_gripper' filename='libgazebo_ros_vacuum_gripper.so'>
+
+    <!-- This part can be commented out if not required -->
+    <ros>
+
+      <!-- Add a namespace -->
+
+      <namespace>/demo</namespace>
+
+      <!-- Remapping service and topic names -->
+      <remapping>switch:=custom_switch</remapping>
+      <remapping>grasping:=custom_grasping</remapping>
+    </ros>
+
+    <!-- Link associated with gripper -->
+    <link_name>link_6</link_name>
+
+    <!-- Max distance to attract entities -->
+    <max_distance>10.0</max_distance>
+
+    <!-- List of entities to be not attracted by the gripper -->
+    <fixed>ground_plane</fixed>
+    <fixed>wall</fixed>
+
+  </plugin>
+</gazebo>
+
+
+<!-- plugins -->
 
 </robot>

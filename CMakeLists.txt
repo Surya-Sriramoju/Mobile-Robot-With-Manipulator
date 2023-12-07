@@ -13,6 +13,8 @@ install(
 install(
   PROGRAMS
   launch/robot_description_publisher.py
+  src/teleop_template.py
+  src/arm_control.py
   DESTINATION lib/${PROJECT_NAME}
   )
 
