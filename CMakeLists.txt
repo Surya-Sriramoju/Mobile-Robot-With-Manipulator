@@ -15,6 +15,7 @@ install(
   launch/robot_description_publisher.py
   src/teleop_template.py
   src/arm_control.py
+  src/IKsolver.py
   DESTINATION lib/${PROJECT_NAME}
   )
 
@@ -28,6 +29,13 @@ find_package(ros2_control REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+
+
+find_package(trajectory_msgs REQUIRED)
+find_package(control_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 install(DIRECTORY
 urdf

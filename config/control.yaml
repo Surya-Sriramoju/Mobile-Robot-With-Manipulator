@@ -26,6 +26,14 @@ position_controller:
             - link_joint_4
             - link_joint_5
             - link_joint_6
+        pid:
+          gains:
+            link_joint_1: {p: 100.0, i: 0.01, d: 20.0}
+            link_joint_2: {p: 200.0, i: 0.02, d: 40.0}
+            link_joint_3: {p: 150.0, i: 0.03, d: 30.0}
+            link_joint_4: {p: 100.0, i: 0.01, d: 20.0}
+            link_joint_5: {p: 500.0, i: 0.005, d: 10.0}
+            link_joint_6: {p: 200.0, i: 0.002, d: 5.0}
         interface_name: position
         command_interfaces:
             - position
@@ -47,6 +55,12 @@ velocity_controller:
             - link_joint_4
             - link_joint_5
             - link_joint_6
+        pid:
+          gains:
+            leftwheelfront: {p: 100.0, i: 0.0, d: 0.0}
+            rightwheelfront: {p: 100.0, i: 0.0, d: 0.0}
+            leftwheelback: {p: 100.0, i: 0.0, d: 0.0}
+            rightwheelback: {p: 100.0, i: 0.0, d: 0.0}
         interface_name: velocity
         command_interfaces:
             - velocity

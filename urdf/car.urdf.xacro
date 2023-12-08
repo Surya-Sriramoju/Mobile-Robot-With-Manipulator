@@ -484,7 +484,7 @@
     <axis
       xyz="0 0 -1" />
   </joint>
-  <link
+  <!-- <link
     name="lidar_link">
     <inertial>
       <origin
@@ -536,7 +536,7 @@
       link="lidar_link" />
     <axis
       xyz="0 0 0" />
-  </joint>
+  </joint> -->
   <link
     name="arm_base">
     <inertial>
@@ -1132,7 +1132,7 @@
     <xacro:body_color />
 </gazebo>
 
-<xacro:macro name="lidar_color">
+<!-- <xacro:macro name="lidar_color">
     <visual>
         <material>
             <ambient>0 0 0 1</ambient>
@@ -1144,7 +1144,7 @@
 </xacro:macro>
 <gazebo reference="lidar_link">
     <xacro:lidar_color />
-</gazebo>
+</gazebo> -->
 
 <xacro:macro name="hinge_color">
     <visual>
