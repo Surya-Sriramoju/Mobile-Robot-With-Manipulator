@@ -16,6 +16,7 @@ install(
   src/teleop_template.py
   src/arm_control.py
   src/IKsolver.py
+  src/test.py
   DESTINATION lib/${PROJECT_NAME}
   )
 

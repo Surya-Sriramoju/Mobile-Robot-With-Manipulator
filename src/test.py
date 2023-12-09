@@ -17,7 +17,9 @@ from functools import partial
 from mpl_toolkits.mplot3d import axes3d, Axes3D
 import time
 from std_srvs.srv import SetBool
+
 from rclpy.task import Future
+
 class Circle_UR5(Node):
 
     def __init__(self):
@@ -32,6 +34,9 @@ class Circle_UR5(Node):
         self.joint_position_pub = self.create_publisher(Float64MultiArray, '/position_controller/commands', 10)
         self.wheel_velocities_pub = self.create_publisher(Float64MultiArray, '/velocity_controller/commands', 10)
         self.joint_state_pub = self.create_publisher(JointState, '/joint_states', 10)
+                # Create a client for the gripper service
+        self.gripper_switch_client = self.create_client(SetBool, '/demo/custom_switch')
+        ##############################
         self.joint_positions = Float64MultiArray()
         self.wheel_velocities = Float64MultiArray()
         self.joint_positions.data= [float(0.0), float(0.0), float(0.0), float(math.pi/2), float(math.pi/2), float(0.0), float(0.0000000000000001), float(0.001)]
@@ -249,69 +254,118 @@ class Circle_UR5(Node):
         # plt.pause(0.05)
         plt.show()
         end = time.time()
-        # print(end-start) # print time taken to run the code
-       
-        # ax = plt.axes(projection='3d')
-
-        # Data for a three-dimensional line
-        # ax.axes.set_xlim3d(left=500, right=700) 
-        # ax.axes.set_ylim3d(bottom=-200, top=200) 
-        # ax.axes.set_zlim3d(bottom=0, top=1000) 
-        # ax.set_xlabel("X coordinate")
-        # ax.set_ylabel("Y coordinate")
-        # ax.set_zlabel("Z coordinate")
-
-
-        # ax.plot3D(x, y, z, 'red' ,linewidth=2.5)
-
-
-        # # %%
-        # max(x)
-
-        # # %%
-        # min(x)
-
-        # # %%
-        # min(y)
-
-        # # %%
-        # max(y)
-
-        # # %%
-        # max(z)
-
-        # # %%
-        # min(z)
 
     # %%
-    def move_joints(self):
+
+    # Inside Circle_UR5 class
+    def toggle_gripper(self, state):
+        request = SetBool.Request()
+        request.data = state
+        future = self.gripper_switch_client.call_async(request)
+        rclpy.spin_until_future_complete(self, future)
+        if future.result() is not None:
+            self.get_logger().info(f"Gripper switched {'on' if state else 'off'} successfully.")
+        else:
+            self.get_logger().error("Failed to switch gripper.")
+
+    # Inside Circle_UR5 class
+    def move_to_pick_position(self, pick_position):
+        # Implement the logic to move the robot to the specified pick position
+        # You might need to calculate the trajectory or use a motion planning library.
+        # For demonstration, let's assume a simple linear move.
+
+        # Set the desired joint positions to move towards the pick position
+        desired_joint_positions = [0.0, -math.pi/2, -math.pi/2, 0.0, 0.0000000000000001, 0.001]
+        
+        # Publish the desired joint positions
+        joint_positions = Float64MultiArray()
+        joint_positions.data = desired_joint_positions
+        self.joint_position_pub.publish(joint_positions)
+
+        # Wait for the robot to reach the pick position (you may need a more sophisticated approach)
+        time.sleep(2.0)
+
+
+
+
+    # Inside Circle_UR5 class
+    def move_joints(self, pick_position):
         joint_positions = Float64MultiArray()
         wheel_velocities = Float64MultiArray()
         linear_vel = 0.0
         steer_angle = 0.0
-        
-        pprint("here")
-        j=0
 
-        while (j<=100):
-            #qpub = [q_pub1[j],q_pub2[j],q_pub3[j],q_pub4[j],q_pub5[j],q_pub6[j]]
-          
+        # Move to home position
+        self.toggle_gripper(False)  # Ensure gripper is off
+        self.move_to_pick_position(pick_position)  # Move to the specified pick position
+        self.go_to_home_position()
+
+        # Pick operation
+        self.toggle_gripper(True)  # Turn on gripper
+        self.pick_object()
+
+        # Move to home position (optional, adjust as needed)
+        self.go_to_home_position()
+
+        # Place operation
+        self.toggle_gripper(False)  # Turn off gripper
+        self.place_object()
+
+        j = 0
+        while (j <= 100):
             wheel_velocities.data = [linear_vel, -linear_vel, linear_vel, -linear_vel, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-            joint_positions.data = [steer_angle, steer_angle, float(self.q_pub1[j]), float(self.q_pub2[j]), float(self.q_pub3[j]),float(self.q_pub4[j]),float(self.q_pub5[j]),float(self.q_pub6[j])]
+            joint_positions.data = [steer_angle, steer_angle, float(self.q_pub1[j]), float(self.q_pub2[j]),
+                                    float(self.q_pub3[j]), float(self.q_pub4[j]), float(self.q_pub5[j]), float(self.q_pub6[j])]
             time.sleep(0.05)
             self.joint_position_pub.publish(joint_positions)
             self.wheel_velocities_pub.publish(wheel_velocities)
-            j+=1
+            j += 1
+
+
+    # Inside Circle_UR5 class
+    def go_to_home_position(self):
+        # Assuming the home position is a predefined joint configuration
+        home_joint_positions = [0.0, -math.pi/2, -math.pi/2, 0.0, 0.0000000000000001, 0.001]
+        self.move_to_joint_positions(home_joint_positions)
+
+    def pick_object(self):
+        # Move the gripper down to pick up the object
+        pick_joint_positions = [0.0, -math.pi/2, -math.pi/2, 0.0, 0.0000000000000001, 0.001]
+        self.move_to_joint_positions(pick_joint_positions)
+
+        # Close the gripper to pick up the object
+        self.toggle_gripper(True)
+
+    def place_object(self):
+        # Assuming the place position is another predefined joint configuration
+        place_joint_positions = [0.0, -math.pi/4, -math.pi/4, 0.0, 0.0000000000000001, 0.001]
+        self.move_to_joint_positions(place_joint_positions)
+
+        # Open the gripper to release the object
+        self.toggle_gripper(False)
+
+    # Add this helper method to simplify joint position commands
+    def move_to_joint_positions(self, joint_positions):
+        joint_positions_msg = Float64MultiArray()
+        joint_positions_msg.data = joint_positions
+        self.joint_position_pub.publish(joint_positions_msg)
+        time.sleep(2)  # Adjust sleep time based on your robot's motion time
+
+
     
 def main(args=None):
-    
+    pick_position = [0.0, -math.pi/2, -math.pi/4, 0.0, 0.0000000000000001, 0.001]
+
 
     rclpy.init(args=args)
     node = Circle_UR5()
     node.numerical_IK()
-    node.move_joints()
+    node.move_joints(pick_position)
+    # node.move_joints()
     node.destroy_node()
     rclpy.shutdown()
+
+
 
 if __name__ == '__main__':
     main()

@@ -9,6 +9,8 @@ import select
 import tty
 import termios
 from pynput import keyboard
+from std_srvs.srv import SetBool
+from rclpy.task import Future
 
 # Define key codes
 a,b,c,d,e,f = 0.0,0.0,0.0,0.0,0.0,0.0
@@ -23,6 +25,7 @@ class KeyboardControlNode(Node):
         self.joint_state_pub = self.create_publisher(JointState, '/joint_states', 10)
 
         self.settings = termios.tcgetattr(sys.stdin)
+        self.gripper_switch_client = self.create_client(SetBool, '/demo/custom_switch')
 
     def getKey(self):
         tty.setraw(sys.stdin.fileno())
@@ -34,6 +37,16 @@ class KeyboardControlNode(Node):
 
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, self.settings)
         return key
+    
+    def toggle_gripper(self, state):
+        request = SetBool.Request()
+        request.data = state
+        future = self.gripper_switch_client.call_async(request)
+        rclpy.spin_until_future_complete(self, future)
+        if future.result() is not None:
+            self.get_logger().info(f"Gripper switched {'on' if state else 'off'} successfully.")
+        else:
+            self.get_logger().error("Failed to switch gripper.")
 
     def run_keyboard_control(self):
         self.msg = """
@@ -51,6 +64,7 @@ class KeyboardControlNode(Node):
         self.get_logger().info(self.msg)
         joint_positions = Float64MultiArray()
         wheel_velocities = Float64MultiArray()
+        self.toggle_gripper(False)
         linear_vel = 0.0
         steer_angle = 0.0
         a,b,c,d,e,f = 0.0,0.0,0.0,0.0,0.0,0.0
@@ -73,6 +87,14 @@ class KeyboardControlNode(Node):
                     d += 0.1
                 elif key == 'g':
                     e += 0.1
+
+                ## gripper
+
+                elif key == 'b':
+                    self.toggle_gripper(True)
+                
+                elif key == 'n':
+                    self.toggle_gripper(False)
 
                 elif key == 'q':
                     a -= 0.1

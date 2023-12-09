@@ -635,7 +635,7 @@
     type="revolute">
     <origin
       xyz="0 0 0.087"
-      rpy="0 0 3.1416" />
+      rpy="0 0 0" />
     <parent
       link="arm_base" />
     <child
@@ -643,8 +643,8 @@
     <axis
       xyz="0 0 -1" />
     <limit
-      lower="-3.14"
-      upper="3.14"
+      lower="-6.28"
+      upper="6.28"
       effort="0"
       velocity="0" />
   </joint>
@@ -693,7 +693,7 @@
     type="revolute">
     <origin
       xyz="7.1962E-05 0.135 0"
-      rpy="-1.5708 0.010572 -0.00053305" />
+      rpy="-1.5708 1.5708 -0.00053305" />
     <parent
       link="link_1" />
     <child
@@ -701,8 +701,8 @@
     <axis
       xyz="0 0 -1" />
     <limit
-      lower="-3.14"
-      upper="3.14"
+      lower="-6.28"
+      upper="6.28"
       effort="0"
       velocity="0" />
   </joint>
@@ -751,7 +751,7 @@
     type="revolute">
     <origin
       xyz="0 -0.425 -0.11995"
-      rpy="3.1416 0 -3.1319" />
+      rpy="3.1416 0 1.57079" />
     <parent
       link="link_2" />
     <child
@@ -759,8 +759,8 @@
     <axis
       xyz="0 0 1" />
     <limit
-      lower="-3.14"
-      upper="3.14"
+      lower="-6.28"
+      upper="6.28"
       effort="0"
       velocity="0" />
   </joint>
@@ -809,7 +809,7 @@
     type="revolute">
     <origin
       xyz="-0.39225 0 -0.09492"
-      rpy="3.1416 0 0.52654" />
+      rpy="3.1416 0 0" />
     <parent
       link="link_3" />
     <child
@@ -817,8 +817,8 @@
     <axis
       xyz="0 0 1" />
     <limit
-      lower="-3.14"
-      upper="3.14"
+      lower="-6.28"
+      upper="6.28"
       effort="0"
       velocity="0" />
   </joint>
@@ -867,7 +867,7 @@
     type="revolute">
     <origin
       xyz="0 -0.09492 0"
-      rpy="-1.5708 -1.4334 3.1416" />
+      rpy="-1.5708 0 3.1416" />
     <parent
       link="link_4" />
     <child
@@ -875,8 +875,8 @@
     <axis
       xyz="0 0 1" />
     <limit
-      lower="-3.14"
-      upper="3.14"
+      lower="-6.28"
+      upper="6.28"
       effort="0"
       velocity="0" />
   </joint>
@@ -933,8 +933,8 @@
     <axis
       xyz="0 0 1" />
     <limit
-      lower="-3.14"
-      upper="3.14"
+      lower="-6.28"
+      upper="6.28"
       effort="0"
       velocity="0" />
   </joint>
@@ -1057,8 +1057,8 @@
 
  <joint name="link_joint_1">
      <command_interface name="position">
-         <param name="min">-3.14</param>
-         <param name="max">3.14</param>
+         <param name="min">-6.28</param>
+         <param name="max">6.28</param>
      </command_interface>
      <state_interface name="position"/>
      <state_interface name="velocity"/>
@@ -1232,6 +1232,29 @@
 <!-- plugins -->
 
 <!-- vacuum gripper -->
+<link name="vacuum_effector">
+    <gravity>0</gravity>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.02 0.05"/>
+      </geometry>
+      <material name="transparent">
+        <color rgba="0 0 0 0"/>
+      </material>
+    </visual>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.000000 0.000000 0.000000"/>
+      <mass value="0.0001"/>
+      <inertia ixx="1e-08" ixy="0" ixz="0" iyy="1e-08" iyz="0" izz="1e-08"/>
+    </inertial>
+  </link>
+  <joint name="end_effector" type="revolute">
+    <parent link="link_6" />
+    <child link="vacuum_effector" />
+    <origin rpy="1.5708 0 0" xyz="0 0 0.01" />
+    <limit effort="30" velocity="1.0" lower="0" upper="0" />
+  </joint>
 <gazebo>
   <plugin name='vacuum_gripper' filename='libgazebo_ros_vacuum_gripper.so'>
 
@@ -1248,7 +1271,7 @@
     </ros>
 
     <!-- Link associated with gripper -->
-    <link_name>link_6</link_name>
+    <link_name>vacuum_effector</link_name>
 
     <!-- Max distance to attract entities -->
     <max_distance>10.0</max_distance>
