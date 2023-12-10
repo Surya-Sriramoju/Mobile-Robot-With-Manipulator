@@ -17,6 +17,10 @@ install(
   src/arm_control.py
   src/IKsolver.py
   src/test.py
+  src/pick_place.py
+  src/IK_numerical.py
+  src/params.py
+  src/utils.py
   DESTINATION lib/${PROJECT_NAME}
   )
 

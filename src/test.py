@@ -325,7 +325,7 @@ class Circle_UR5(Node):
     # Inside Circle_UR5 class
     def go_to_home_position(self):
         # Assuming the home position is a predefined joint configuration
-        home_joint_positions = [0.0, -math.pi/2, -math.pi/2, 0.0, 0.0000000000000001, 0.001]
+        home_joint_positions = [0.0, 0.0001, 0.0001, 0.0, 0.0000000000000001, 0.001]
         self.move_to_joint_positions(home_joint_positions)
 
     def pick_object(self):
@@ -346,15 +346,16 @@ class Circle_UR5(Node):
 
     # Add this helper method to simplify joint position commands
     def move_to_joint_positions(self, joint_positions):
+        print('Hi')
         joint_positions_msg = Float64MultiArray()
-        joint_positions_msg.data = joint_positions
+        joint_positions_msg.data = [0.0, 0.0] + joint_positions
         self.joint_position_pub.publish(joint_positions_msg)
         time.sleep(2)  # Adjust sleep time based on your robot's motion time
 
 
     
 def main(args=None):
-    pick_position = [0.0, -math.pi/2, -math.pi/4, 0.0, 0.0000000000000001, 0.001]
+    pick_position = [0.0, math.pi/2, math.pi/4, 0.0, 0.0000000000000001, 0.001]
 
 
     rclpy.init(args=args)
