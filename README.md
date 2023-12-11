@@ -11,5 +11,5 @@
 # in another terminal run the below command for launching the gazebo simulation
 - ros2 launch car gazebo.launch.py
 # Open another terminal and run for picking and placing operation
--  ros2 run car pick_place.py
+- ros2 run car pick_place.py
 ```
