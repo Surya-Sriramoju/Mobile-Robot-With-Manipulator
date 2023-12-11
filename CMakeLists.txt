@@ -14,9 +14,7 @@ install(
   PROGRAMS
   launch/robot_description_publisher.py
   src/teleop_template.py
-  src/arm_control.py
-  src/IKsolver.py
-  src/test.py
+  src/IKValidation.py
   src/pick_place.py
   src/IK_numerical.py
   src/params.py

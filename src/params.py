@@ -1,7 +1,6 @@
 from sympy import symbols
 from math import pi
 
-#Create class to store different DH paramters of each joint
 class DHParam:
    def __init__(self, d, alpha, a, theta):
     self.d = d
@@ -9,7 +8,6 @@ class DHParam:
     self.a = a
     self.theta = theta
 
-# Setting up the DH table for the UR5 arm
 Table_DHParam = {
     'J1' : DHParam(d=0.089159 , alpha= pi/2  , a =  0        , theta = symbols("θ1")),
     'J2' : DHParam(d=0.0      , alpha= 0     , a = -0.425    , theta = symbols("θ2")),
